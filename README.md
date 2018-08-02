@@ -8,4 +8,6 @@ The purpose of this tutorial to introduce people to:
 * Docker
 * Docker compose
 
-Feel free to create issues for improvements or requests
+Feel free to create issues for improvements or requests.
+
+[Go to the tutorial](tutorial.md)
