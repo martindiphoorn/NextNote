@@ -1,6 +1,6 @@
 # NextNote
 
-The purpose of this tutorial to introduce people to:
+The purpose of this tutorial is to introduce people to:
 
 * Spring Boot
 * Angular 6
