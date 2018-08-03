@@ -1084,7 +1084,7 @@ note.component.ts
 Did you notice the console.log after a succesfull create or update?
 We probably want to go back to the list instead.
 
-Let's change that replace the console.log statements or puth this line below the console.log
+Let's change that replace the console.log statements or put this line below the console.log
 
 note.component.ts
 ```typescript
@@ -1162,43 +1162,20 @@ In your IDE you probably can set the active Spring profile.
 In Angular 6 has something called environments and give us the same behaviour as profiles in Spring Boot.
 Let's add an development environment configuration to the angular.json file. 
 
-Open angular.json
+Angular 6 contains two environments by default:
+* environment.ts
+* environment.prod.ts
 
-```json
-  ...
-  "configurations": {
-            "production": {
-            ...
-            },
-            "development": {
-              "optimization": false,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": false,
-              "namedChunks": false,
-              "aot": false,
-              "extractLicenses": false,
-              "vendorChunk": false,
-              "buildOptimizer": fakse,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
-                }
-              ]
-            },
-            
-   ...
+Environment.ts can be seen as the default development profile.
+When deploying/building with prodcution profile it will overwrite environment with the environmet.prod.ts.
 
-```
-This tells Angular to change the environment file. We specify the environment.dev.ts file here.
-Let's create this. Copy environment.prod.ts to environment.dev.ts.
-
-After that add the api endpoint to the environment files (also the existing files need it).
-Let's add it with the current value of the api endpoint.
+So if we want to change our development setting it can be done in environment.ts.
 
 
-environment.dev.ts
+We want to create an environment property which holds the api endpoint.
+So we can change it in in docker or production. Let's add this property
+
+environment.ts
 ```properties
 export const environment = {
   production: false,
@@ -1221,3 +1198,34 @@ private API_URL = environment.api_endpoint + '/notes';
 ```
 
 Do the same for the group.service.ts, but let it end on '/groups' instead of '/notes'.
+
+After this we can build the frontend with an production profile:
+
+```bash
+ng build --configuration=production
+```
+
+When we want to run it locally we use:
+
+```properties
+npm run start
+```
+
+The package.json contains: 
+
+```json
+{
+  "name": "nxt-note",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
+  },
+```
+
+`npm run start` will cal; start in the scripts node and run `ng serve`.
+
