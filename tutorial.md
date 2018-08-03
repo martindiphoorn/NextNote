@@ -669,9 +669,7 @@ ng generate module app-routing --flat --module=app
 > --module=app tells the CLI to register it in the imports array of the AppModule.
 
 This will generate an app-routing.module.ts which is loaded from the app.module.ts.
-
-
-So now we have an new module called AppRouting and it is loading by the app.module.ts.
+So now we have a new module named AppRouting and it is loading by the app.module.ts.
 
 Now let's open the app-routing.module.ts and make it a routing module, by adding some configuration and add some routes to our current note and note list components.
 
