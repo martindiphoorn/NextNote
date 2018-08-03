@@ -285,7 +285,7 @@ backend_1   | Caused by: java.lang.IllegalStateException: Cannot find migrations
 backend_1   | 	at org.springframework.util.Assert.state(Assert.java:94) ~[spring-core-5.0.8.RELEASE.jar!/:5.0.8.RELEASE]
 ```
 
-The import part off this error is ```please add migrations or check your Flyway configuration``` let's do that.
+The important part of this error is ```please add migrations or check your Flyway configuration``` let's do that.
 
 By default flyway checks resources/db/migration. 
 You already have resources that is where your application.properties is.
@@ -340,7 +340,7 @@ Now we have a backend running and a database we can continue to the entities.
 ## 2.3 Entities and lombok
 
 Entities are the mapping between your database tabel and the java code.
-Most off the time it contains the same fields and relations as in the database.
+Most of the time it contains the same fields and relations as in the database.
 We will use lombok here so we can forget about the getters and the setters.
 
 For our structure we try to use functional folders. So group and note will receive seperate folders.
@@ -740,7 +740,7 @@ Open note.component.html and change the content into:
 <h2>Note details</h2>
 <a routerLink="/notes">Back to the overview</a>
 <p>
-  this will become the details page off our note. You reached this note with id: {{id}}
+  this will become the details page of our note. You reached this note with id: {{id}}
 </p>
 ```
 
@@ -1009,7 +1009,7 @@ Great we can display data, but for displaying we need data.
 Creating and updating is almost the same so we will do that in the same way.
 
 First we will extend our service with two methods, create and update.
-Next we will create a new button on the list for a new node.
+Next we will create a new button on the list for a new note.
 And finally we add a save button to save the data.
 
 Let's create the create and update methods. Add these to your existing service.
@@ -1044,7 +1044,7 @@ note.component.html
 <button (click)="save()">save</button>
 ```
 
-Next we need to implement the save, but also need to check if the id=0 to detect a new node.
+Next we need to implement the save, but also need to check if the id=0 to detect a new note.
 
 note.component.ts
 ```typescript
@@ -1110,3 +1110,114 @@ constructor(
   }
 
 ```
+
+# 4 Running outside of docker-compose
+
+Often we want to run angular or spring without docker-compose.
+So we can test our worker faster without restarting the whole docker.
+
+First we need to know we can manage containers individually.
+
+## 4.1 Managing containers
+In our case we defined 3 containers in the docker-compose file.
+
+ * db: contains MariaDB
+ * backend:  contains Spring Boot
+ * frontend: contains Angular
+ 
+ Most Docker Compose commands can be used for one container.
+ If we only want to start the db we can use:
+ 
+ ```bash
+docker-compose up db
+```
+
+This can be done for commands like: start, stop, down, build.
+
+
+## 4.2 Start Spring Boot from the CLI or an IDE
+To support starting Boot from the CLI or an IDE, we first create an profile for development (dev).
+Create an application-dev.properties in the same folder as application.properties with the following content:
+
+```properties
+# Set the properties needed for the database
+dbHost=127.0.0.1
+dbPort=8306
+dbName=notes
+dbUsername=root
+dbPassword=n0t3s
+```
+
+With Docker Compose the above properties are set by environment variables.
+
+Now we can use maven to start our application in development mode.
+
+```properties
+SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
+```
+
+In your IDE you probably can set the active Spring profile.
+
+## 4.3 Start Angular 6 locally
+In Angular 6 has something called environments and give us the same behaviour as profiles in Spring Boot.
+Let's add an development environment configuration to the angular.json file. 
+
+Open angular.json
+
+```json
+  ...
+  "configurations": {
+            "production": {
+            ...
+            },
+            "development": {
+              "optimization": false,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": false,
+              "buildOptimizer": fakse,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ]
+            },
+            
+   ...
+
+```
+This tells Angular to change the environment file. We specify the environment.dev.ts file here.
+Let's create this. Copy environment.prod.ts to environment.dev.ts.
+
+After that add the api endpoint to the environment files (also the existing files need it).
+Let's add it with the current value of the api endpoint.
+
+
+environment.dev.ts
+```properties
+export const environment = {
+  production: false,
+  api_endpoint: 'http://localhost:8090'
+};
+``` 
+
+> Don't forget to change the existing files
+
+We now need to adjust our services (note.service.ts and group.service.ts).
+So it will use the api_endpoint specified in the environment file.
+
+In the note.service.ts file change the following line
+```java
+private API_URL = 'http://localhost:8090/notes';
+```
+into
+```java
+private API_URL = environment.api_endpoint + '/notes';
+```
+
+Do the same for the group.service.ts, but let it end on '/groups' instead of '/notes'.
