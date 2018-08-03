@@ -396,7 +396,7 @@ public class Note {
 
 So as you can see the entities are staying cleaner because of the @Data lombok will create public getId and setId methods.
 With the entities in place, we should build and restart docker-compose again. 
-In the application.properties we added the following propertie:
+In the application.properties we added the following property:
 
 ```properties
 # Validate entities against the database during startup
@@ -441,7 +441,7 @@ By creating this we have the following methods available:
 These are the most common used methods in an application, but if we need more we can create that.
 But for now this is enough.
 
-I expect that you can do this at your own for the group part.
+I expect that you can do this on your own for the group part.
 So go ahead and make the GroupRepository interface in the group folder. 
 
 ## 2.5 Rest security
