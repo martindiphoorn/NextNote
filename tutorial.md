@@ -1229,3 +1229,32 @@ The package.json contains:
 
 `npm run start` will cal; start in the scripts node and run `ng serve`.
 
+
+## 4.4 Making it work together
+
+To run our code locally for faster development we need to set the right properties.
+
+When run locally we can't use the hostnames defined in the docker-compose so everything should run throug localhost.
+In the docker-compose.yml we defined some port properties.
+
+| container | localhost | docker-network |
+| --------  | --------- | -------------- |
+| db        | 8306      | 3306           |
+| frontend  | 8080      | 80 |
+| backend   | 8090      | 8080 |
+
+So if we want to make our local instances work nicely we should change some things.
+
+if the frontend needs to talk to the backend we should change the environment.ts
+```json
+api_endpoint: 'http://localhost:8090'
+```
+
+The backend needs to talk to the database on a different port so we need to change the application-dev.properties
+
+```properties
+dbPort=8306
+```
+
+This probably are the current values. Changes are that we should make a seperate file for the docker now.
+Can you do that?
