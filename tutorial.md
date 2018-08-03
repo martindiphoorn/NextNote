@@ -189,6 +189,10 @@ cd ../docker
 docker-compose build
 ```
 
+Don't forget to give the file executable rights: `chmod +x build.sh`
+
+> Tip: Under windows you can call this build.bak and you can start it without "./" we assume macos or linux
+
 It goes to boot folder and builds the backend without tests.
 This is needed as the test will fail in the current state.
 Then it will go the nxt-note folder and build the frontend.
