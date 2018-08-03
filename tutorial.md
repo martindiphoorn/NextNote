@@ -133,7 +133,7 @@ Create a new folder called ```docker``` in your workspace.
 We will create a script here for building everything.
 
 First we start with a docker-compose.yml which will contain the configuration of our Docker containers and will glue them together in their own network.
-So lets create the docker-compose.yml in the docker folder.
+So let's create the docker-compose.yml in the docker folder.
 
 ```yaml
 version: '3.3'
@@ -235,7 +235,7 @@ In Spring boot it is possible to have a properties file or an yaml file. We will
 
 Also it is possible to have different properties for different environments. We will be using the default one.
 
-We need to make Spring boot aware of our datasource, so lets add these lines:
+We need to make Spring boot aware of our datasource, so let's add these lines:
 
 ```properties
 # Datasource configuration
@@ -272,14 +272,14 @@ Next you can run the same command as before:
 ``` 
 
 When it is starting you will notice that it will still fail on flyway configuration.
-But that is the next chapter. So lets continue and configure flyway.
+But that is the next chapter. So let's continue and configure flyway.
 
 ## 2.2 Flyway and migrations
 
 Actually we don't need to configure flyway, it is configured by default. Remember we added flyway to the initializer?
 That's it. In the pom.xml file you will see that it is configured as starter. Spring does the rest.
 
-But what is the error we see? Well lets check te error:
+But what is the error we see? Well let's check te error:
 ```composer log
 backend_1   | Caused by: java.lang.IllegalStateException: Cannot find migrations location in: [classpath:db/migration] (please add migrations or check your Flyway configuration)
 backend_1   | 	at org.springframework.util.Assert.state(Assert.java:94) ~[spring-core-5.0.8.RELEASE.jar!/:5.0.8.RELEASE]
@@ -304,7 +304,7 @@ CREATE TABLE IF NOT EXISTS `note` (
   DEFAULT CHARACTER SET = utf8;
 ```
 
-Now lets build an start. Now it should work and start without errors!
+Now let's build an start. Now it should work and start without errors!
 
 If you have an database viewer or client you can now check what has been done in your database.
 
@@ -592,11 +592,11 @@ public class NoteController {
 }
 ``` 
 > **Note 1**: we are working here straight on the database entities. 
-> Normally i would prefer to use data transfer or objects (DTO) for this.
-> For simplicity i left it out for now
+> Normally I would prefer to use data transfer or objects (DTO) for this.
+> For simplicity reasons I left it out for now
 
 > **Note 2**: There is no security or proper fault handling. There is room for improvement. 
-> But againg simplicity i left it out
+> But again, for simplicity reseasons I left it out
 
 Now go ahead and do the same for groups.
 
