@@ -436,7 +436,7 @@ By creating this we have the following methods available:
 >* save(Note note)
 >* saveAll(Iterable<Note> notes)  
 
-*This list is copied from the: [spring documentation](https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/CrudRepository.html)*
+*This list is copied from the: [Spring documentation](https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/CrudRepository.html)*
 
 These are the most common used methods in an application, but if we need more we can create that.
 But for now this is enough.
@@ -446,7 +446,7 @@ So go ahead and make the GroupRepository interface in the group folder.
 
 ## 2.5 Rest security
 At this stage we are not going to implement a fully featured security model.
-But as we added the security starter from spring we need to allow everything for easy testing.
+But as we added the security starter from Spring we need to allow everything for easy testing.
 
 Create a folder config and in that folder a file called WebSecurityConfig.java with the following contents:
 
@@ -480,7 +480,7 @@ As mentioned in the code it permits everything, do not use this in production/li
 This is for testing only.
 
 Because we are going to use rest services we will encounter CORS exceptions.
-To prevent this we need to prepare spring boot for it.
+To prevent this we need to prepare Spring Boot for it.
 
 So we add another config class called WebConfig.java with the following contents:
 
@@ -507,7 +507,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 ## 2.6 Rest controllers
 Now we can display our data, we should make it available to the frontend. This will be done by restfull service. 
-In spring these are controllers of data. And for rest we will use the annotation @RestController for it. 
+In Spring these are controllers of data. And for rest we will use the annotation @RestController for it. 
 
 Let's create NoteController.java in the folder note and replace it with the following contents:
 
