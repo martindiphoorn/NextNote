@@ -4,10 +4,11 @@ Create a workspace folder called nextNote.
 
 In this tutorial we assume that you have installed the following tools:
 - Java 8 or higher
-- Maven
+- Maven 3
 - Node 8 (not higher)
 - Angular CLI 6
 - Docker
+- Docker Compose (Comes with docker)
 
 
 ## 1.1 Backend setup
@@ -225,7 +226,7 @@ But before we can do that we first need to setup the database.
 We will do that and more in the application.properties 
 
 ## 2.1 Application properties
-application.properties is located in the resource folder and probably is empty right now.
+application.properties is located in the resource folder of the project (boot/src/main/resources/application.properties) and probably is empty right now.
 In Spring boot it is possible to have a properties file or an yaml file. We will be using the properties.
 
 Also it is possible to have different properties for different environments. We will be using the default one.
