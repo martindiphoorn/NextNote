@@ -12,9 +12,9 @@ Feel free to create issues for improvements or requests.
 
 [Go to the tutorial](tutorial.md)
 
-**Technology list**
+## Technology list
 
-Backend   
+*Backend*   
 * Java 8  
 * Spring Boot  
   * JPA/Data  
@@ -24,7 +24,7 @@ Backend
 * Lombok  
 * MapStruct  
 
-Frontend  
+*Frontend*  
 * Angular 6  
 * Angular CLI  
 * RXJS  
