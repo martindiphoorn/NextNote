@@ -11,3 +11,20 @@ The purpose of this tutorial is to introduce people to:
 Feel free to create issues for improvements or requests.
 
 [Go to the tutorial](tutorial.md)
+
+**Technology list**
+
+Backend   
+* Java 8  
+* Spring Boot  
+  * JPA/Data  
+  * Security  
+  * Web  
+* FlyWay  
+* Lombok  
+* MapStruct  
+
+Frontend  
+* Angular 6  
+* Angular CLI  
+* RXJS  
