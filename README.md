@@ -10,7 +10,12 @@ The purpose of this tutorial is to introduce people to:
 
 Feel free to create issues for improvements or requests.
 
-[Go to the tutorial](tutorial.md)
+## Chapters   
+[1 setup workspace](1_setup_workspace.md)  
+[2 backend Spring Boot](2_backend_spring_boot.md)  
+[3 frontend Angular](3_frontend_angular.md)  
+[4 running outside of Docker Compose](4_running_outside_of_docker-compose.md)  
+[5 MapStruct](5_mapstruct.md)  
 
 ## Technology list
 
