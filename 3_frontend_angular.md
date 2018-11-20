@@ -2,7 +2,7 @@
 During the setup part we have run: 
 
 ```bash
-ng new nxt-note --style=scss
+ng new nxt-note --style=scss --directory=frontend
 ```
 
 This created a new project called nxt-note and we are now going to extend it. 
@@ -17,8 +17,8 @@ SCSS is compatible with normal css, but allows much more like nesting.
 
 
 ## 3.1 Components all over the place
-Angular 6 uses components for everything. Navigation is also done by changing components.
-Even the start of the application is a component. It is called app.component.ts 
+Angular 7 uses components for everything. Navigation is also done by changing components.
+Even the start of the application is a component. It is called `app.component.ts`  
 
 So let's create a new component for our note list. Which gives us an overview of notes.
 We use the angular cli to create a new component. Let's create our first component with:
@@ -35,7 +35,7 @@ this will create a functional folder called note-list with four files:
 >* note-list.component.ts
 
 Scss is the sass stylesheet, html is the layout ts is the typescript file for the component.
-And spec.ts files are used for unit testing and will not be distrubated.   
+And spec.ts files are used for unit testing and will not be distributed.   
 
 Feels good? Let's create our second component:
 
@@ -68,7 +68,7 @@ import {NoteComponent} from "./note/note.component";
 const routes: Routes = [
   { path: '', redirectTo: '/notes', pathMatch: 'full' },
   { path: 'notes', component: NoteListComponent },
-  { path: 'note/:id', component: NoteComponent }
+  { path: 'notes/:id', component: NoteComponent }
 ];
 
 
@@ -80,7 +80,7 @@ export class AppRoutingModule { }
 ```
 
 So let's explain this a bit. In the constant routes we define the paths to our components.
-You see that the path to note contains an placeholder :id which can be used to open the note by it's id in the detail page.
+You see that the path to a single note contains an placeholder :id which can be used to open the note by it's id in the detail page.
 The last line is the default redirect if nothing is given. The option pathMatch tells the router that is should be an exact match with nothing else behind it.
 
 Next we create an import of the RouterModule by using forRoot with our routes constant.
@@ -89,38 +89,38 @@ In our case we only want one RouterModule.
 
 We still need to tell the RouterModule where to output the components we just navigated to.
 
-Open app.component.html and change the contents to:
+Open `app.component.html` and change the contents to:
 
 ```html
 <h1>{{title}}</h1>
 <router-outlet></router-outlet>
 ```
 
-The contents of ```{{title}}``` can be found in app.component.ts, open it and change the title to 'Next Notes'.
+The contents of `{{title}}` can be found in `app.component.ts`, open it and change the title to 'Next Notes'.
 
 Now we can now test our routing by starting up docker compose and changing the url by hand.
 
-> use ```./build.sh && docker-compose up``` in the docker folder to start it
+> use `./build.sh && docker-compose up` in the docker folder to start it
 
 Now open up a browser and type in: http://localhost:8080/   
 If you have watch the url you should have noticed that it has changed to /notes.
-Let's change it to /note/1 and we should see a page with: note works!
+Let's change it to /notes/1 and we should see a page with: note works!
 
 We just finished creating the base routing for our application.
 
 Now we will add a link from the list to the note.
-Let's open note-list.component.html and replace the contents with:
+Let's open `note-list.component.html` and replace the contents with:
 
 ```html
 <h2>Notes overview</h2>
 <p>
-  this is a test link to <a routerLink="/note/1">Note 1</a><br/>
-  this is a test link to <a routerLink="/note/2">Note 2</a>
+  this is a test link to <a routerLink="/notes/1">Note 1</a><br/>
+  this is a test link to <a routerLink="/notes/2">Note 2</a>
 </p>
 ```
 
 When we are in the note page we want to display the note id and also a link back to the notes.
-Open note.component.html and change the content into:
+Open `note.component.html` and change the content into:
 
 ```html
 <h2>Note details</h2>
@@ -130,7 +130,7 @@ Open note.component.html and change the content into:
 </p>
 ```
 
-Next we need to open the note.component.ts and make the id available for the html.
+Next we need to open the `note.component.ts` and make the id available for the html.
 The comments will try to explain the code, you can skip that.
 
 ```typescript
@@ -170,7 +170,7 @@ Now rebuild and start your containers.
 Before we can continue with creating or updating notes we first need to create the communication with the backend.
 We will do this with injectable services. But first we need to add the HttpClient to our project.
 
-Open app.module.ts and add the following lines:
+Open `app.module.ts` and add the following lines:
 
 ```typescript
 ...
@@ -198,7 +198,7 @@ Again we use the cli to create the base. We put in the note/shared folder so we 
 ng generate service note/shared/NoteApi
 ```
 
-Open the new note-api.service.ts file and change it to the following code.
+Open the new `note-api.service.ts` file and change it to the following code.
 
 ```typescript
 import {Injectable} from '@angular/core';
@@ -227,7 +227,7 @@ export class NoteApiService {
 We now have a simple api which can be used to retrieve all or one note from the backend.
 However there is no type safety. We don't know what will come back. Let's add some type safety.
 
-First we need to create a note object in typescript. Create a note.model.ts in the note/shared folder with the following contents:
+First we need to create a note object in typescript. Create a `note.model.ts` in the note/shared folder with the following contents:
 
 ```typescript
 export class Note {
@@ -236,7 +236,7 @@ export class Note {
 }
 ```
 
-Next we update the NoteApiService with the typesafety in place:
+Next we update the NoteApiService with the type safety in place:
 
 ```typescript
 import {Injectable} from '@angular/core';
@@ -249,7 +249,7 @@ import {Observable} from "rxjs";
 })
 export class NoteApiService {
 
-  private API_URL = 'http://localhost:8080/notes';
+  private API_URL = 'http://localhost:8090/notes';
 
   constructor(private  httpClient: HttpClient) {
   }
@@ -266,7 +266,7 @@ export class NoteApiService {
 
 Now we need to change the note-list and note components to retrieve the data and display it.
 
-note-list.component.ts
+`note-list.component.ts`
 
 ```typescript
 import { Component, OnInit } from '@angular/core';
@@ -291,11 +291,11 @@ export class NoteListComponent implements OnInit {
 }
 ```
 
-note-list.component.html
+`note-list.component.html`
 ```html
 <h2>Notes overview</h2>
 <ul>
-  <li *ngFor="let note of notes" routerLink="/note/{{note.id}}">{{note.name}}</li>
+  <li *ngFor="let note of notes" routerLink="/notes/{{note.id}}">{{note.name}}</li>
 </ul>
 
 ```
@@ -306,7 +306,8 @@ As most people know the FormsModule style from AngularJS we will use the Reactiv
 
 So we first need to import the ReactiveFormsModule in the app.module.ts:
 
-app.module.ts
+`app.module.ts`
+
 ```typescript
 ...
 import {ReactiveFormsModule} from "@angular/forms";
@@ -324,7 +325,8 @@ import {ReactiveFormsModule} from "@angular/forms";
 
 ``` 
 
-note.component.ts
+`note.component.ts`
+
 ```typescript
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
@@ -370,7 +372,8 @@ export class NoteComponent implements OnInit {
 }
 ```
 
-note.component.html
+`note.component.html`
+
 ```html
 <h2>Note details</h2>
 <a routerLink="/notes">Back to the overview</a>
@@ -400,7 +403,8 @@ And finally we add a save button to save the data.
 
 Let's create the create and update methods. Add these to your existing service.
 
-note-api.service.ts
+`note-api.service.ts`
+
 ```typescript
  
   public create(note: Note): Observable<Note> {
@@ -414,25 +418,28 @@ note-api.service.ts
 
 Add a new button to the note list. 
 
-note-list.component.html
+`note-list.component.html`
+
 ```html
 <h2>Notes overview</h2>
-<a routerLink="/note/0">new note</a>
+<a routerLink="/notes/0">new note</a>
 <ul>
-  <li *ngFor="let note of notes" routerLink="/note/{{note.id}}">{{note.name}}</li>
+  <li *ngFor="let note of notes" routerLink="/notes/{{note.id}}">{{note.name}}</li>
 </ul>
 ```
 
 Add a save button to the note. Just add this line to the end off the file.
 
-note.component.html
+`note.component.html`
+
 ```html
 <button (click)="save()">save</button>
 ```
 
 Next we need to implement the save, but also need to check if the id=0 to detect a new note.
 
-note.component.ts
+`note.component.ts`
+
 ```typescript
    ...
    
@@ -467,19 +474,21 @@ note.component.ts
 
 ```
 
-Did you notice the console.log after a succesfull create or update?
+Did you notice the console.log after a successful create or update?
 We probably want to go back to the list instead.
 
 Let's change that replace the console.log statements or put this line below the console.log
 
-note.component.ts
+`note.component.ts`
+
 ```typescript
 this.router.navigate(['/notes']);
 ```
 
 As we did not use router before we also add it to the constructor
 
-note.component.ts
+`note.component.ts`
+
 ```typescript
 
 ...
@@ -496,3 +505,5 @@ constructor(
   }
 
 ```
+
+Restart docker and test the above code. Don't forget to create the same for groups.
