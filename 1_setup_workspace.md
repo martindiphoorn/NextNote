@@ -17,28 +17,30 @@ Go to: https://start.spring.io/
 
 Fill the form in with:
 
-Generate a **Maven Project** with **Java** and Spring Boot **2.0.4**
-> Version 2.0.4 is the latest version at the moment of writing this.
+Generate a **Maven Project** with **Java** and Spring Boot **2.1.0**
+> Version 2.1.0 is the latest version at the moment of writing this.
 
 **Project MetaData**  
 Group: com.example   
 Artifact: nextnote
 
 **Dependencies**
-- JPA
-- Web
-- Security
+- Actuator
 - DevTools
-- Lombok
 - Flyway
+- JPA
+- Lombok
+- Security
+- Web
 
-Hit generate project and unzip the downloaded file to the workspace folder and call it boot.
+
+Hit generate project and unzip the downloaded file to the workspace folder and call it `backend`.
 
 Next we need an script which wait for the database server before starting docker boot.
 Go to the boot folder and create a docker-files folder. 
 This folder will contain files only used by docker builds.
 
-Create a file called starter.sh and add the following contents:
+Create a file called `starter.sh` and add the following contents:
 
 ```bash
 #!/bin/bash
@@ -52,15 +54,15 @@ sleep 5
 
 # Wait for the server to become available
 until mysql -h "${dbHost}" -P "${dbPort}" -u"${dbUsername}" -p"${dbPassword}" -e 'show processlist'; do
-  >&2 echo "MariaDB is unavailable - sleeping"
-  sleep 2
+  >&2 echo "Database is unavailable - sleeping"
+  sleep 5
 done
 
->&2 echo "MariaDB is up - executing command"
+>&2 echo "Database is up - executing command"
 exec $cmd
 ```
 
-Go to the boot folder and create a Dockerfile with the following contents:
+Go to the `backend` folder and create a Dockerfile with the following contents:
 ```yaml
 FROM openjdk:8
 LABEL author="Martin Diphoorn"
@@ -85,14 +87,14 @@ This file is used to build a docker container for the boot backend.
 
 Execute this in your workspace folder in the command line
 ```bash
-ng new nxt-note --style=scss
+ng new nxt-note --style=scss --directory=frontend
 ```
 
-Go to the new nxt-note folder and create a docker-files folder. 
+Go to the new `frontend` folder and create a `docker-files` folder. 
 This folder will contain files only used by docker builds. In this case an nginx configuration file.
 Let's create it.
 
-Create an docker-files/nginx.conf file with the following contents:
+Create an `nginx.conf` file in the `docker-files` folder with the following contents:
 
 ```text
 server {
@@ -129,11 +131,11 @@ As you can see the nginx.conf will be copied from the docker_files folder into t
 
 The last setup part is the glue between the other two containers.
 And we will even add another container for our data.
-Create a new folder called ```docker``` in your workspace.
+Create a new folder called `docker` in your workspace.
 We will create a script here for building everything.
 
-First we start with a docker-compose.yml which will contain the configuration of our Docker containers and will glue them together in their own network.
-So let's create the docker-compose.yml in the docker folder.
+First we start with a `docker-compose.yml` which will contain the configuration of our Docker containers and will glue them together in their own network.
+So let's create the `docker-compose.yml` in the docker folder.
 
 ```yaml
 version: '3.3'
@@ -149,7 +151,7 @@ services:
 
   backend:
     build:
-      context: ../boot
+      context: ../backend
       dockerfile: ./Dockerfile
     environment:
       - TZ=Europe/Amsterdam
@@ -165,7 +167,7 @@ services:
 
   frontend:
     build:
-      context: ../nxt-note
+      context: ../frontend
       dockerfile: ./Dockerfile
     environment:
       - TZ=Europe/Amsterdam
@@ -177,12 +179,12 @@ services:
 ```
 
 For our convenience here is a script to build the applications and the containers in one command.
-I call it build.sh and it has the following contents:
+I call it `build.sh` and it has the following contents:
 ```bash
-cd ../boot
+cd ../backend
 mvn package -DskipTests
 
-cd ../nxt-note
+cd ../frontend
 npm run build
 
 cd ../docker
@@ -193,16 +195,16 @@ Don't forget to give the file executable rights: `chmod +x build.sh`
 
 > Tip: Under windows you can call this build.bak and you can start it without "./" we assume macos or linux
 
-It goes to boot folder and builds the backend without tests.
+It goes to `backend` folder and builds the backend without tests.
 This is needed as the test will fail in the current state.
-Then it will go the nxt-note folder and build the frontend.
+Then it will go the `frontend` folder and build the frontend.
 And finally it builds the containers with docker-compose.
 
 Let's do a quick run to test if everything is working.
 ```bash
 ./build.sh && docker-compose up
 ```
-build.sh will build everything as explained above. And docker-compose up will start the containers.
+`build.sh` will build everything as explained above. And docker-compose up will start the containers.
 
 Expect failures as we did not configure anything in spring yet.
 However the database should be reachable under port localhost:8306 with username root and password n0t3s in your db client.

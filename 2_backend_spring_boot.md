@@ -6,12 +6,12 @@ But before we can do that we first need to setup the database.
 We will do that and more in the application.properties 
 
 ## 2.1 Application properties
-application.properties is located in the resource folder of the project (boot/src/main/resources/application.properties) and probably is empty right now.
-In Spring boot it is possible to have a properties file or an yaml file. We will be using the properties.
+application.properties is located in the resource folder of the project (backend/src/main/resources/application.properties) and probably is empty right now.
+In Spring Boot it is possible to have a properties file or an yaml file. We will be using the properties.
 
 Also it is possible to have different properties for different environments. We will be using the default one.
 
-We need to make Spring boot aware of our datasource, so let's add these lines:
+We need to make Spring Boot aware of our datasource, so let's add these lines:
 
 ```properties
 # Datasource configuration
@@ -41,7 +41,7 @@ Let's add the mysql dependency to our pom.xml. Add the dependency below to your 
 
 That's it, we have made an db connection. If you want to test it,
  you will need to shutdown your current docker-compose by pressing ctrl + c.
-Next you can run the same command as before:
+Next you can run the same command as before from within the `docker` folder:
 
 ```bash
 ./build.sh && docker-compose up
@@ -61,14 +61,14 @@ backend_1   | Caused by: java.lang.IllegalStateException: Cannot find migrations
 backend_1   | 	at org.springframework.util.Assert.state(Assert.java:94) ~[spring-core-5.0.8.RELEASE.jar!/:5.0.8.RELEASE]
 ```
 
-The important part of this error is ```please add migrations or check your Flyway configuration``` let's do that.
+The important part of this error is `please add migrations or check your Flyway configuration` let's do that.
 
-By default flyway checks resources/db/migration. 
-You already have resources that is where your application.properties is.
-Create a folder ```db``` in the resources folder. Create a ```migration``` folder in the just created db folder.
+By default flyway checks `resources/db/migration`. 
+You already have resources that is where your `application.properties` is.
+Create a folder ```db``` in the resources folder. Create a `migration` folder in the just created db folder.
 
-Now we need to add an sql file in the migration folder.
-Create a file called ```V00001__initial.sql``` in the migration folder.
+Now we need to add an sql file in the `migration` folder.
+Create a file called `V00001__initial.sql` in the migration folder.
 Be aware that after the Version number there are two underscores, if you miss that it will fail.
 
 ```sql
@@ -91,7 +91,7 @@ The other one is called flyway_schema_history and will be used by flyway to keep
 So know we have an note table, but maybe we want to be able to group notes.
 Time for our second migration file.
 
-Create a file called ```V00002__group.sql``` in the migration folder.
+Create a file called `V00002__group.sql` in the migration folder.
 
 ```sql
 CREATE TABLE `notegroup` (
@@ -111,11 +111,11 @@ ALTER TABLE `note`
   FOREIGN KEY (groupId) REFERENCES notegroup(id);
 ```
 
-Now we have a backend running and a database we can continue to the entities.
+Now we have a backend running and a database we can continue with the entities.
 
 ## 2.3 Entities and lombok
 
-Entities are the mapping between your database tabel and the java code.
+Entities are the mapping between your database tables and the java code.
 Most of the time it contains the same fields and relations as in the database.
 We will use lombok here so we can forget about the getters and the setters.
 
@@ -171,6 +171,9 @@ public class Note {
 ```
 
 So as you can see the entities are staying cleaner because of the @Data lombok will create public getId and setId methods.
+
+> Watch out: @Data generates also toString which creates a string off all properties, this often is to much.
+ 
 With the entities in place, we should build and restart docker-compose again. 
 In the application.properties we added the following property:
 
@@ -188,14 +191,14 @@ And create connections and other boring hibernate/jpa stuff.
 Spring Data will help you with this and you just need to create an interface.
 Spring Data will create the implementation. Spring calls these interfaces repositories.
 
-Create a new file called NoteRepository.java in the note folder.
+Create a new file called `NoteRepository.java` in the `note` folder.
 
 ```java
 package com.example.nextnote.note;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NoteRepository extends CrudRepository<Note, Long> {
+public interface NoteRepository extends JpaRepository<Note, Long> {
 }
 ```
 
@@ -218,13 +221,13 @@ These are the most common used methods in an application, but if we need more we
 But for now this is enough.
 
 I expect that you can do this on your own for the group part.
-So go ahead and make the GroupRepository interface in the group folder. 
+So go ahead and make the GroupRepository interface in the `group` folder. 
 
-## 2.5 Rest security
+## 2.5 REST security
 At this stage we are not going to implement a fully featured security model.
 But as we added the security starter from Spring we need to allow everything for easy testing.
 
-Create a folder config and in that folder a file called WebSecurityConfig.java with the following contents:
+Create a folder `config` and in that folder a file called `WebSecurityConfig.java` with the following contents:
 
 ```java
 package com.example.nextnote.config;
@@ -255,10 +258,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 As mentioned in the code it permits everything, do not use this in production/live situations. 
 This is for testing only.
 
-Because we are going to use rest services we will encounter CORS exceptions.
+Because we are going to use REST services we will encounter CORS exceptions.
 To prevent this we need to prepare Spring Boot for it.
 
-So we add another config class called WebConfig.java with the following contents:
+So we add another config class called `WebConfig.java` with the following contents:
 
 ```java
 package com.example.nextnote.config;
@@ -281,15 +284,16 @@ public class WebConfig implements WebMvcConfigurer {
 }
 ```
 
-## 2.6 Rest controllers
-Now we can display our data, we should make it available to the frontend. This will be done by restfull service. 
+## 2.6 REST controllers
+Now we can display our data, we should make it available to the frontend. This will be done by restful service. 
 In Spring these are controllers of data. And for rest we will use the annotation @RestController for it. 
 
-Let's create NoteController.java in the folder note and replace it with the following contents:
+Let's create `NoteController.java` in the folder `note` and add the following contents:
 
 ```java
 package com.example.nextnote.note;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -316,7 +320,7 @@ public class NoteController {
 	 * @return
 	 */
 	@RequestMapping(value = "/notes", method = RequestMethod.GET)
-	public Iterable<Note> all() {
+	public List<Note> all() {
 		return this.noteRepository.findAll();
 	}
 
@@ -373,15 +377,15 @@ public class NoteController {
 > This will be added with MapStruct in Chapter 5.
 
 > **Note 2**: There is no security or proper fault handling. There is room for improvement. 
-> But again, for simplicity reseasons I left it out
+> But again, for simplicity reasons I left it out
 
 Now go ahead and do the same for groups.
 
 After this you can build and restart the docker containers.
 
-> use ```./build.sh && docker-compose up``` in the docker folder to start it 
+> use `./build.sh && docker-compose up` in the docker folder to start it 
 
-Now you can test your restfull services with postman, soapui or an other tool.
+Now you can test your restful services with postman, soapui or any other tool.
 A quick test could be to run it in your browser with the following url:
 > http://localhost:8090/notes
 
