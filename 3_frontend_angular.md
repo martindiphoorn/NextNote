@@ -17,7 +17,7 @@ SCSS is compatible with normal css, but allows much more like nesting.
 
 
 ## 3.1 Components all over the place
-Angular 7 uses components for everything. Navigation is also done by changing components.
+Angular uses components for everything. Navigation is also done by changing components.
 Even the start of the application is a component. It is called `app.component.ts`  
 
 So let's create a new component for our note list. Which gives us an overview of notes.

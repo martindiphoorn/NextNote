@@ -6,7 +6,7 @@ In this tutorial we assume that you have installed the following tools:
 - Java 8 or higher
 - Maven 3
 - Node 8 (not higher)
-- Angular CLI 6
+- Angular CLI 8
 - Docker
 - Docker Compose (Comes with docker)
 
@@ -17,22 +17,24 @@ Go to: https://start.spring.io/
 
 Fill the form in with:
 
-Generate a **Maven Project** with **Java** and Spring Boot **2.1.0**
-> Version 2.1.0 is the latest version at the moment of writing this.
+Generate a **Maven Project** with **Java** and Spring Boot **2.2.2**
+> Version 2.2.2 is the latest version at the moment of writing this.
 
 **Project MetaData**  
 Group: com.example   
 Artifact: nextnote
 
 **Dependencies**
-- Actuator
-- DevTools
-- Flyway
-- JPA
+- Spring Boot Actuator
+- Spring Boot DevTools
+- Spring Data JPA
+- Spring Security
+- Spring Web
+- MySQL Client
+- Flyway Migration
 - Lombok
-- Security
-- Web
 
+Open the options part and select Java 11.
 
 Hit generate project and unzip the downloaded file to the workspace folder and call it `backend`.
 
@@ -64,10 +66,10 @@ exec $cmd
 
 Go to the `backend` folder and create a Dockerfile with the following contents:
 ```yaml
-FROM openjdk:8
+FROM openjdk:11
 LABEL author="Martin Diphoorn"
 
-RUN apt-get update && apt-get install --no-install-recommends -y mariadb-client unzip && rm -rf /var/lib/apt/lists/*;
+RUN apt-get update && apt-get install --no-install-recommends -y mariadb-client unzip curl && rm -rf /var/lib/apt/lists/*;
 
 VOLUME /tmp
 
@@ -193,7 +195,7 @@ docker-compose build
 
 Don't forget to give the file executable rights: `chmod +x build.sh`
 
-> Tip: Under windows you can call this build.bak and you can start it without "./" we assume macos or linux
+> Tip: Under windows you can call this build.bak and you can start it without "./" we assume macOs or linux
 
 It goes to `backend` folder and builds the backend without tests.
 This is needed as the test will fail in the current state.
@@ -211,7 +213,7 @@ However the database should be reachable under port localhost:8306 with username
 And your browse should be able to reach the frontend at http://localhost:8080/
 All these things are configured in the docker-compose file.
 
-That's it. We have a working backend in Spring boot and a frontend in Angular 6.
+That's it. We have a working backend in Spring boot and a frontend in Angular.
 We also have an MariaDB database called notes.
 
 Just a few commands for docker-compose

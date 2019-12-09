@@ -13,8 +13,8 @@ Add an property to your pom.xml with the version of mapstruct. Just to be sure a
 ```xml
 <properties>
     ...
-    <java.version>1.8</java.version>
-    <org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
+    <java.version>11</java.version>
+    <org.mapstruct.version>1.3.0.Final</org.mapstruct.version>
     ...
 </properties>
 ```
@@ -24,7 +24,7 @@ Next add the maven dependency for MapStruct.
 ```xml
 <dependency>
     <groupId>org.mapstruct</groupId>
-    <artifactId>mapstruct-jdk8</artifactId>
+    <artifactId>mapstruct</artifactId>
     <version>${org.mapstruct.version}</version>
 </dependency>
 ```
@@ -37,7 +37,7 @@ Root cause is that maven does not scan the classpath any more if paths are defin
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-compiler-plugin</artifactId>
-    <version>3.5.1</version>
+    <version>3.8.1</version>
     <configuration>
         <source>${java.version}</source>
         <target>${java.version}</target>
@@ -49,7 +49,7 @@ Root cause is that maven does not scan the classpath any more if paths are defin
             <path>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.0</version>
+                <version>${lombok.version}</version>
             </path>
             <path>
                 <groupId>org.mapstruct</groupId>

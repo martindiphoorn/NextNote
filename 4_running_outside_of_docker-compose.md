@@ -3,7 +3,7 @@
 Often we want to run angular or spring without docker-compose.
 So we can test our worker faster without restarting the whole docker.
 
-First we need to know we can manage containers individually.
+First we need to know how we can manage containers individually.
 
 ## 4.1 Managing containers
 In our case we defined 3 containers in the docker-compose file.
@@ -24,7 +24,7 @@ This can be done for commands like: start, stop, down, build.
 
 ## 4.2 Start Spring Boot from the CLI or an IDE
 To support starting Boot from the CLI or an IDE, we first create an profile for development (dev).
-Create an application-dev.properties in the same folder as application.properties with the following content:
+Create an `application-dev.properties` in the same folder as application.properties with the following content:
 
 ```properties
 # Set the properties needed for the database
@@ -46,15 +46,15 @@ SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 In your IDE you probably can set the active Spring profile.
 
 ## 4.3 Start Angular 6 locally
-In Angular 6 has something called environments and give us the same behaviour as profiles in Spring Boot.
+In Angular 6 we have something called environments and give us the same behaviour as profiles in Spring Boot.
 Let's add an development environment configuration to the angular.json file. 
 
-Angular 6 contains two environments by default:
+Angular contains two environments by default:
 * environment.ts
 * environment.prod.ts
 
 Environment.ts can be seen as the default development profile.
-When deploying/building with prodcution profile it will overwrite environment with the environmet.prod.ts.
+When deploying/building with production profile it will overwrite environment with the environment.prod.ts.
 
 So if we want to change our development setting it can be done in environment.ts.
 
@@ -72,10 +72,10 @@ export const environment = {
 
 > Don't forget to change the existing files
 
-We now need to adjust our services (note.service.ts and group.service.ts).
+We now need to adjust our services (note-api.service.ts and group-api.service.ts).
 So it will use the api_endpoint specified in the environment file.
 
-In the note.service.ts file change the following line
+In the `note-api.service.ts` file change the following line
 ```java
 private API_URL = 'http://localhost:8090/notes';
 ```
@@ -84,7 +84,7 @@ into
 private API_URL = environment.api_endpoint + '/notes';
 ```
 
-Do the same for the group.service.ts, but let it end on '/groups' instead of '/notes'.
+Do the same for the `group-api.service.ts`, but let it end on '/groups' instead of '/notes'.
 
 After this we can build the frontend with an production profile:
 
@@ -114,7 +114,7 @@ The package.json contains:
   },
 ```
 
-`npm run start` will cal; start in the scripts node and run `ng serve`.
+`npm run start` will call start in the scripts node and run `ng serve`.
 
 
 ## 4.4 Making it work together

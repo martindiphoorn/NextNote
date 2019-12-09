@@ -20,7 +20,7 @@ Feel free to create issues for improvements or requests.
 ## Technology list
 
 *Backend*   
-* Java 8  
+* Java 11  
 * Spring Boot  
   * JPA/Data  
   * Security  
@@ -30,6 +30,6 @@ Feel free to create issues for improvements or requests.
 * MapStruct  
 
 *Frontend*  
-* Angular 6  
+* Angular 8  
 * Angular CLI  
 * RXJS  

@@ -27,18 +27,6 @@ spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 ```
 
-This is all spring needs to know. However it will not start, because mysql is not yet added to the project.
-Let's add the mysql dependency to our pom.xml. Add the dependency below to your pom.xml
-
-
-
-```xml
-<dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
-</dependency>
-```
-
 That's it, we have made an db connection. If you want to test it,
  you will need to shutdown your current docker-compose by pressing ctrl + c.
 Next you can run the same command as before from within the `docker` folder:
@@ -172,7 +160,7 @@ public class Note {
 
 So as you can see the entities are staying cleaner because of the @Data lombok will create public getId and setId methods.
 
-> Watch out: @Data generates also toString which creates a string off all properties, this often is to much.
+> Watch out: @Data generates also toString which creates a string off all properties, this often is to much. And can create infinite loops.
  
 With the entities in place, we should build and restart docker-compose again. 
 In the application.properties we added the following property:
@@ -378,6 +366,8 @@ public class NoteController {
 
 > **Note 2**: There is no security or proper fault handling. There is room for improvement. 
 > But again, for simplicity reasons I left it out
+
+> **Note 3**: In this class we have only one constructor. So @Autowired could be removed.
 
 Now go ahead and do the same for groups.
 
