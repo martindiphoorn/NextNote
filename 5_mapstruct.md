@@ -132,6 +132,7 @@ public interface NoteMapper {
 
 	NoteDto toDto(Note note);
 
+    List<NoteDto> toDto(List<Note> note);
 }
 ```
 
@@ -142,13 +143,15 @@ NoteMapperImpl.java
 ```java
 package com.example.nextnote.note;
 
-import javax.annotation.Generated;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2018-09-06T11:51:35+0200",
-    comments = "version: 1.2.0.Final, compiler: javac, environment: Java 1.8.0_181 (Oracle Corporation)"
+    date = "2019-12-09T15:53:13+0100",
+    comments = "version: 1.3.0.Final, compiler: javac, environment: Java 11.0.5-ea (Ubuntu)"
 )
 @Component
 public class NoteMapperImpl implements NoteMapper {
@@ -175,22 +178,117 @@ public class NoteMapperImpl implements NoteMapper {
 
         return noteDto;
     }
+
+    @Override
+    public List<NoteDto> toDto(List<Note> note) {
+        if ( note == null ) {
+            return null;
+        }
+
+        List<NoteDto> list = new ArrayList<NoteDto>( note.size() );
+        for ( Note note1 : note ) {
+            list.add( toDto( note1 ) );
+        }
+
+        return list;
+    }
 }
 ```
 
-As you can see above the class is annotated with @Component. This allows us to use @AutoWired in spring.
+As you can see above the class is annotated with @Component. That allow us to use it by injection.
+Let's change our NoteController to return dto objects.
 
-Example: 
+We only want to communicate with the dto objects. So we need to update all the methods and make use of our new mapper.
+In the code below you will find the mapper in use. Check the difference with your old code.
 
 ```java
-// The preferred way is by constructor, but this is easier for the example
-@AutoWired
-private NoteMapper noteMapper;
+package com.example.nextnote.note;
 
-public NoteDto doSomething(Note note) {
-	NoteDto noteDto = this.noteMapper.toDto(note);
-	// More code
-	return noteDto;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+public class NoteController {
+
+	private final NoteMapper noteMapper;
+
+	private final NoteRepository noteRepository;
+
+	/**
+	 * Spring will automatically inject the mapper and the repository
+	 *
+	 * @param noteMapper
+	 * @param noteRepository
+	 */
+	@Autowired
+	public NoteController(NoteMapper noteMapper, NoteRepository noteRepository) {
+		this.noteMapper = noteMapper;
+		this.noteRepository = noteRepository;
+	}
+
+	/**
+	 * Returns all our notes from the database
+	 *
+	 * @return
+	 */
+	@RequestMapping(value = "/notes", method = RequestMethod.GET)
+	public List<NoteDto> all() {
+		List<Note> notes = this.noteRepository.findAll();
+		return noteMapper.toDto(notes);
+	}
+
+	/**
+	 * Return the note with the specified id or null if is not available
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/notes/{id}", method = RequestMethod.GET)
+	public NoteDto one(@PathVariable("id") Long id) {
+		return this.noteRepository.findById(id).map(noteMapper::toDto).orElse(null);
+		
+	}
+
+	/**
+	 * Create a new note
+	 *
+	 * @param noteDto
+	 * @return
+	 */
+	@RequestMapping(value = "/notes", method = RequestMethod.POST)
+	public NoteDto create(@RequestBody NoteDto noteDto) {
+		Note note = new Note();
+		note.setId(null); // There should not be an id when creating a new record
+		noteMapper.toEntity(noteDto, note); // The mapper will copy all values from the dto
+		this.noteRepository.save(note);
+		return noteMapper.toDto(note);
+	}
+
+	/**
+	 * Update the note with the given id
+	 *
+	 * @param id
+	 * @param noteDto
+	 * @return
+	 */
+	@RequestMapping(value = "/notes/{id}", method = RequestMethod.PUT)
+	public NoteDto update(@PathVariable("id") Long id, @RequestBody NoteDto noteDto) {
+		// Retrieve the note by the id
+		Optional<Note> optionalNote = this.noteRepository.findById(id);
+		if (optionalNote.isPresent()) {
+			Note note = optionalNote.get();
+			noteMapper.toEntity(noteDto, note);
+			this.noteRepository.save(note);
+			return noteMapper.toDto(note);
+		}
+
+		return null;
+	}
+
 }
-
 ```
+
+Now you can do this for groups.
