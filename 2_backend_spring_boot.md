@@ -15,7 +15,7 @@ We need to make Spring Boot aware of our datasource, so let's add these lines:
 
 ```properties
 # Datasource configuration
-spring.datasource.url=jdbc:mysql://${dbHost}:${dbPort}/${dbName}
+spring.datasource.url=jdbc:mysql://${dbHost}:${dbPort}/${dbName}?serverTimezone=Europe/Amsterdam
 spring.datasource.username=${dbUsername}
 spring.datasource.password=${dbPassword}
 spring.datasource.driverClassName=com.mysql.jdbc.Driver
