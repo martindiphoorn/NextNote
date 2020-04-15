@@ -114,7 +114,7 @@ server {
 }
 ```
 
-Next let's create an docker file for the frontend container. Create a Dockerfile with the following contents:
+Next let's create an docker file for the frontend container. Create a file `Dockerfile` with the following contents:
 
 ```yaml
 FROM nginx:alpine
@@ -195,7 +195,7 @@ docker-compose build
 
 Don't forget to give the file executable rights: `chmod +x build.sh`
 
-> Tip: Under windows you can call this build.bak and you can start it without "./" we assume macOs or linux
+> Tip: Under windows you can call this build.bat and you can start it without "./" we assume macOs or linux
 
 It goes to `backend` folder and builds the backend without tests.
 This is needed as the test will fail in the current state.
